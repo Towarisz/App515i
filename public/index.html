@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="PL-pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Mateusz Stoch"/>
+    <meta name="copyright" content="Mateusz Stoch"/>
+    <link rel="stylesheet" href="./css/alertify.min.css" />
+    <link rel="stylesheet" href="./css/themes/default.min.css" />
+    <title>Document</title>
+</head>
+<body>
+    
+    <label for="fname">Imie:</label><br>
+    <input type="text" id="fname" name="fname" required><br>
+    <label for="lname">Nazwisko:</label><br>
+    <input type="text" id="lname" name="lname" required><br>
+    <label for="lname">Numer Stanowiska:</label><br>
+    <input type="number" id="Nr" name="Nr" required min=1 max=19><br><br>
+    <input type="submit" id="submit" value="Przejdź dalej">
+    
+    <script src="/script/socket.io.js"></script>
+    <script src="/script/alertify.min.js"></script>
+    <script src="/script/script.js" ></script>
+</body>
+</html>
