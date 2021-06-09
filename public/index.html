@@ -11,15 +11,23 @@
     <title>Document</title>
 </head>
 <body>
-    
-    <label for="fname">Imie:</label><br>
-    <input type="text" id="fname" name="fname" required><br>
-    <label for="lname">Nazwisko:</label><br>
-    <input type="text" id="lname" name="lname" required><br>
-    <label for="lname">Numer Stanowiska:</label><br>
-    <input type="number" id="Nr" name="Nr" required min=1 max=19><br><br>
-    <input type="submit" id="submit" value="Przejdź dalej">
-    
+    <div id="login">
+        <label for="fname">Imie:</label><br>
+        <input type="text" id="fname" name="fname" class="input" required><br>
+        <label for="lname">Nazwisko:</label><br>
+        <input type="text" id="lname" name="lname" class="input" required><br>
+        <label for="lname">Numer Stanowiska:</label><br>
+        <input type="number" id="Nr" name="Nr" class="input" required min=1 max=20><br><br>
+        <input type="submit" id="submit" value="Przejdź dalej">
+    </div>
+    <div id="teacher"></div>
+    <div id="student" style="display: none;">
+        <span>a</span>
+        <span>a</span>
+        <span>a</span>
+        <input type="checkbox" name="CB" id="CB">
+    </div>
+
     <script src="/script/socket.io.js"></script>
     <script src="/script/alertify.min.js"></script>
     <script src="/script/script.js" ></script>
