@@ -8,6 +8,8 @@
     <meta name="copyright" content="Mateusz Stoch"/>
     <link rel="stylesheet" href="./css/alertify.min.css" />
     <link rel="stylesheet" href="./css/themes/default.min.css" />
+    <link rel="stylesheet" href="./css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/style.css">
     <title>Document</title>
 </head>
 <body>
@@ -20,7 +22,7 @@
         <input type="number" id="Nr" name="Nr" class="input" required min=1 max=20><br><br>
         <input type="submit" id="submit" value="Przejdź dalej">
     </div>
-    <div id="teacher"></div>
+    <table id="teacher" class="table table-striped"></table>
     <div id="student" style="display: none;">
         <span>a</span>
         <span>a</span>
@@ -28,8 +30,9 @@
         <input type="checkbox" name="CB" id="CB">
     </div>
 
-    <script src="/script/socket.io.js"></script>
-    <script src="/script/alertify.min.js"></script>
-    <script src="/script/script.js" ></script>
+    <script src="./script/socket.io.js"></script>
+    <script src="./script/alertify.min.js"></script>
+    <script src="./script/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="./script/script.js" ></script>
 </body>
 </html>

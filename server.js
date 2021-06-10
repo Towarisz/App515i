@@ -30,9 +30,10 @@ io.on('connection', (socket) => {
       socket.on("Student",()=>{
         socket.emit("Passed","Uczeń");
         socket.join("Student");
+        io.to("Teacher").emit("UUpdate",msg);
       });
       socket.on("Teacher",(message)=>{
-        if(message == "haslo" && Users[20]){
+        if(message == "" && Users[20]){
           socket.emit("Passed","Nauczyciel");
           socket.join('Teacher');
         }
@@ -50,8 +51,10 @@ io.on('connection', (socket) => {
       delete Users[user]};
     // console.log(Users);
   });
+  socket.on("CB",(user,action)=>{
+    io.to("Teacher").emit("SCB",action,user);
+  });
 });
-
 
 server.listen(3000, () => {
   console.log('listening on *:3000');
