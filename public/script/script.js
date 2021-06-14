@@ -4,7 +4,7 @@ const User = {}
 
 document.querySelector("#submit").addEventListener("click",()=>{
     if(fields[2].value != 20){
-        if(fields[0].checkValidity() && fields[1].checkValidity() && !fields[2].validity.valueMissing/* && fields[2].validity.rangeOverflow && fields[2].validity.UnderOverflow*/){
+        if(fields[0].checkValidity() && fields[1].checkValidity() && !fields[2].validity.valueMissing && !fields[2].validity.rangeOverflow && !fields[2].validity.rangeUnderflow){
             socket.emit("login",[...fields].map(el=>el.value));
             User[0] = [...fields].map(el=>el.value);
             socket.emit("Student");
@@ -31,8 +31,17 @@ socket.on('Passed',(msg)=>{
         document.querySelector("#student").innerHTML = ``;
         let CBs = document.querySelectorAll(".CB");
         let Trs = document.querySelectorAll("tr");
+        socket.on("Data",(Users)=>{
+            Object.values(Users).forEach(x=>{
+                let data = x.value[2];
+                if(data != 20){
+                    Trs[data].children[1].innerText = x.value[0];
+                    Trs[data].children[2].innerText = x.value[1];
+                    Trs[data].classList.value = "table-info";
+                }
+            });
+        });
         socket.on("SCB",(action,user)=>{
-            CBs[user[2]-1].checked = action=="C"?true:false;
             action == "C"?alertify.success(`${user[0]} ${user[1]} skończył/a zadanie na stanowsku nr. ${user[2]}`):false;
             action == "C"?Trs[user[2]].classList.value = "table-success":Trs[user[2]].classList.value = "table-info";
         });
@@ -40,15 +49,20 @@ socket.on('Passed',(msg)=>{
             Trs[user[2]].children[1].innerText = user[0];
             Trs[user[2]].children[2].innerText = user[1];
             Trs[user[2]].classList.value = "table-info";
+            CBs[user[2]].checked = false;
             alertify.success(`${user[0]} ${user[1]} dołączył/a na ${user[2]} stanowisku`);
         });
+        socket.on("DC",(user)=>{
+            alertify.message(`${user[0]} ${user[1]} rozłączył/a się ze stanowskia nr. ${user[2]}`);
+            Trs[user[2]].classList.value = "";
+            Trs[user[2]].children[1].innerText = ""; 
+            Trs[user[2]].children[2].innerText = "";
+        });
     }else{
-        let D = document.querySelector("#student");
-        D.style.display = "flex";
+        let D = document.querySelector("#student > div.userID");
+        D.parentElement.style.display = "flex";
         let CB = document.querySelector("#CB");
-        D.children[0].innerText = User[0][2];
-        D.children[1].innerText = User[0][0];
-        D.children[2].innerText = User[0][1];
+        D.innerHTML = `<span class="badge bg-dark">${User[0][2]}</span><span> ${User[0][0]} ${User[0][1]}</span>`;
         CB.addEventListener("click",()=>{
             if(CB.checked == true){
                 socket.emit("CB",User[0],"C");
@@ -56,13 +70,16 @@ socket.on('Passed',(msg)=>{
                 socket.emit("CB",User[0],"U");
             }
         })
+        socket.on("CBReset",()=>{
+            CB.checked = false;
+        });
     }
 });
 
-function build(){
+function build(Users){
     let tab = [`<thead><tr><th scope="col">#</th><th scope="col">Imię</th><th scope="col">Nazwisko</th><th scope="col">Zadanie</th></tr></thead><tbody>`];
     for(let i = 1 ; i<=19; i++){
-        tab[i] = `<tr"><td scope="row">${i}</td><td></td><td></td><td><input type="checkbox" name="CB" class="CB"  disabled><td></tr>`
+        tab[i] = `<tr><td scope="row">${i}</td><td></td><td></td><td></td></tr>`
     }
 
     return tab.join("")+"</tbody>";

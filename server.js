@@ -34,8 +34,10 @@ io.on('connection', (socket) => {
       });
       socket.on("Teacher",(message)=>{
         if(message == "" && Users[20]){
-          socket.emit("Passed","Nauczyciel");
           socket.join('Teacher');
+          socket.emit("Passed","Nauczyciel");
+          socket.emit("Data",Users)
+          io.to("Student").emit("CBReset");
         }
       });
     }
@@ -48,6 +50,7 @@ io.on('connection', (socket) => {
     // console.log(user);
     if(user) {
       console.log(`${Users[user].value} disconnected`);
+      io.to("Teacher").emit("DC",Users[user].value);
       delete Users[user]};
     // console.log(Users);
   });

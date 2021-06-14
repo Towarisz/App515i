@@ -10,25 +10,30 @@
     <link rel="stylesheet" href="./css/themes/default.min.css" />
     <link rel="stylesheet" href="./css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
-    <title>Document</title>
+    <title>Logowanie</title>
 </head>
 <body>
     <div id="login">
         <label for="fname">Imie:</label><br>
-        <input type="text" id="fname" name="fname" class="input" required><br>
+        <input type="text" id="fname" name="fname" class="form-control input" required>
         <label for="lname">Nazwisko:</label><br>
-        <input type="text" id="lname" name="lname" class="input" required><br>
+        <input type="text" id="lname" name="lname" class="form-control input" required>
         <label for="lname">Numer Stanowiska:</label><br>
-        <input type="number" id="Nr" name="Nr" class="input" required min=1 max=20><br><br>
-        <input type="submit" id="submit" value="Przejdź dalej">
+        <input type="number" id="Nr" name="Nr" class="form-control input" required min=1 max=20><br>
+        <input type="submit" id="submit" class="btn btn-primary" value="Przejdź dalej">
     </div>
     <table id="teacher" class="table table-striped"></table>
     <div id="student" style="display: none;">
-        <span>a</span>
-        <span>a</span>
-        <span>a</span>
-        <input type="checkbox" name="CB" id="CB">
+        <div class="userID"></div>
+        <div>
+            <input type="checkbox" name="CB" id="CB" class="form-check-input">
+            <label for="CB"> - Po zakończeniu zadania naciśnij checkbox</label>
+        </div>
     </div>
+
+    <footer>
+        <div class="fixed-bottom float-end">Copyright © 2021 Mateusz Stoch</div>
+    </footer>
 
     <script src="./script/socket.io.js"></script>
     <script src="./script/alertify.min.js"></script>
