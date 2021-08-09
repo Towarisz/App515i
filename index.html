@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="PL-pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Mateusz Stoch"/>
+    <meta name="copyright" content="Mateusz Stoch"/>
+    <link rel="stylesheet" href="./css/alertify.min.css" />
+    <link rel="stylesheet" href="./css/themes/default.min.css" />
+    <link rel="stylesheet" href="./css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Logowanie</title>
+</head>
+<body>
+    <div id="login">
+        <label for="fname">Imie:</label><br>
+        <input type="text" id="fname" name="fname" class="form-control input" required>
+        <label for="lname">Nazwisko:</label><br>
+        <input type="text" id="lname" name="lname" class="form-control input" required>
+        <label for="lname">Numer Stanowiska:</label><br>
+        <input type="number" id="Nr" name="Nr" class="form-control input" required min=1 max=20><br>
+        <input type="submit" id="submit" class="btn btn-primary" value="Przejdź dalej">
+    </div>
+    <table id="teacher" class="table table-striped"></table>
+    <div id="student" style="display: none;">
+        <div class="userID"></div>
+        <div>
+            <input type="checkbox" name="CB" id="CB" class="form-check-input">
+            <label for="CB"> - Po zakończeniu zadania naciśnij checkbox</label>
+        </div>
+        <div>
+            <button id="help"></button> - nacisnij w razie problemu lub pytania
+        </div>
+    </div>
+
+    <footer>
+        <div class="fixed-bottom float-end">Copyright © 2021 Mateusz Stoch</div>
+    </footer>
+
+    <script src="./script/socket.io.js"></script>
+    <script src="./script/alertify.min.js"></script>
+    <script src="./script/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="./script/script.js" ></script>
+</body>
+</html>
