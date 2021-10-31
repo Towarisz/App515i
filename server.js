@@ -13,10 +13,6 @@ app.get('/', (req, res) => {
   res.sendFile('/index.html',options);
 });
 
-app.get('/info', (req, res) => {
-  res.sendFile(__dirname + '/public/info.html');
-});
-
 io.on('connection', (socket) => {
   socket.on('login', (msg) => {
     //console.log(msg);
@@ -38,6 +34,9 @@ io.on('connection', (socket) => {
           socket.emit("Passed","Nauczyciel");
           socket.emit("Data",Users)
           io.to("Student").emit("CBReset");
+        }else{
+          socket.emit("DenyAccess");
+          delete Users[20];
         }
       });
     }

@@ -2,6 +2,7 @@ let fields = document.querySelectorAll(".input");
 const socket = io();
 const User = {}
 
+
 alertify.dialog('myAlert',function factory(){
     return{
       main:function(){
@@ -54,10 +55,16 @@ socket.on('LoginOccupied', (msg) => {
     alertify.error(msg);
   });
 
+
+socket.on('DenyAccess', () => {
+    alertify.error('Błędne Hasło');
+});
+
 socket.on('Passed',(msg)=>{
     alertify.success(`Zalogowano się jako ${msg}`);
     document.querySelector("#login").style.display = "none";
     if(msg == 'Nauczyciel'){
+        window.document.title = "Panel Nauczyciela";
         document.querySelector("#teacher").innerHTML = `${build().toString()}`;
         document.querySelector("#student").innerHTML = ``;
         let CBs = document.querySelectorAll(".CB");
@@ -90,6 +97,7 @@ socket.on('Passed',(msg)=>{
             Trs[user[2]].children[2].innerText = "";
         });
     }else{
+
         let D = document.querySelector("#student > div.userID");
         D.parentElement.style.display = "flex";
         let CB = document.querySelector("#CB");
@@ -98,6 +106,8 @@ socket.on('Passed',(msg)=>{
         help.addEventListener("click",()=>{
             alertify.myAlert("");
         });
+
+
         CB.addEventListener("click",()=>{
             if(CB.checked == true){
                 socket.emit("CB",User[0],"C");
