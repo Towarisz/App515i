@@ -56,6 +56,10 @@ io.on('connection', (socket) => {
   socket.on("CB",(user,action)=>{
     io.to("Teacher").emit("SCB",action,user);
   });
+  socket.on("Problem",(id,quest,qcode)=>{
+    // console.log(id,quest,qcode);
+    io.to("Teacher").emit("fProblem",id,quest,qcode);
+  });
 });
 
 server.listen(3000, () => {

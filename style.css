@@ -29,15 +29,9 @@ body {
 }
 
 #help {
-	width: 20px;
-	height: 20px;
-	top: -5px;
-	position: relative;
-	border-radius: 5px;
-}
-
-#Question, #Qcode{
-  width: 100%;
-  overflow-wrap: break-word;
-  resize: none;
+  width: 20px;
+  height: 20px;
+  top: -5px;
+  position: relative;
+  border-radius: 5px;
 }
