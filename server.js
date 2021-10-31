@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
     }
   });
     
-  console.log('a user connected');
+  //console.log('a user connected');
 
   socket.on('disconnect',(reason)=>{
     const user = Object.keys(Users).find(key => Users[key].id == socket.id);

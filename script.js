@@ -2,6 +2,38 @@ let fields = document.querySelectorAll(".input");
 const socket = io();
 const User = {}
 
+
+alertify.dialog('myAlert',function factory(){
+    return{
+      main:function(){
+            this.message = "Pytanie <br> <textarea id='Question'></textarea> <br><br> Kod <br> <textarea id='Qcode' rows='6'></textarea>";
+      },
+      build:function(){
+          this.setHeader("Pomoc");
+        },
+        setup:function(){
+            return { 
+                buttons:[{text:"Potwierdź"},{text: "Anuluj", key:27, cancel:true}],
+                focus: { element:0 },
+                options:{
+                  maximizable:false,
+                  movable:false,
+                },
+            };
+      },
+      prepare:function(){
+        this.setContent(this.message);
+        this.resizeTo(500,480);
+      },
+      callback:function(CloseEvent){
+        if(CloseEvent.button.cancel != true){
+            let quest = document.querySelector("#Question");
+            let qcode = document.querySelector("#Qcode");
+            socket.emit("Problem",quest,qcode);
+        }
+      }
+  }});
+
 document.querySelector("#submit").addEventListener("click",()=>{
     if(fields[2].value != 20){
         if(fields[0].checkValidity() && fields[1].checkValidity() && !fields[2].validity.valueMissing && !fields[2].validity.rangeOverflow && !fields[2].validity.rangeUnderflow){
@@ -12,16 +44,17 @@ document.querySelector("#submit").addEventListener("click",()=>{
             alertify.error('Proszę wypełnić wszystkie pola');
         }
     }else{
-        alertify.prompt("Proszę podać hasło: ","",(evt,value)=>{
+        alertify.prompt("Logowanie","Proszę podać hasło: ","",(evt,value)=>{
             socket.emit("login",["Teacher","Teacher",20]);
             socket.emit("Teacher",value);
-        })
+        },function(){});
     }
 });
 
 socket.on('LoginOccupied', (msg) => {
     alertify.error(msg);
   });
+
 
 socket.on('DenyAccess', () => {
     alertify.error('Błędne Hasło');
@@ -64,11 +97,17 @@ socket.on('Passed',(msg)=>{
             Trs[user[2]].children[2].innerText = "";
         });
     }else{
-        window.document.title = "Panel Ucznia";
+
         let D = document.querySelector("#student > div.userID");
         D.parentElement.style.display = "flex";
         let CB = document.querySelector("#CB");
+        let help = document.querySelector("#help");
         D.innerHTML = `<span class="badge bg-dark">${User[0][2]}</span><span> ${User[0][0]} ${User[0][1]}</span>`;
+        help.addEventListener("click",()=>{
+            alertify.myAlert("");
+        });
+
+
         CB.addEventListener("click",()=>{
             if(CB.checked == true){
                 socket.emit("CB",User[0],"C");
