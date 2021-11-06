@@ -60,6 +60,12 @@ io.on('connection', (socket) => {
     // console.log(id,quest,qcode);
     io.to("Teacher").emit("fProblem",id,quest,qcode);
   });
+  socket.on("reqCode",(isReq)=>{
+    io.to("Student").emit("reqCode",isReq)
+  })
+  socket.on("code",(id,code)=>{
+    io.to("Teacher").emit("code",id,code);
+  })
 });
 
 server.listen(3000, () => {

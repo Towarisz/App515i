@@ -2,77 +2,6 @@ let fields = document.querySelectorAll(".input");
 const socket = io();
 const User = {}
 
-// klasy alertify
-alertify.dialog('myAlert',function factory(){//wyslanie pytania do nauczyciela
-    return{
-      main:function(){
-            this.message = 
-            "Pytanie <br> <textarea id='Question' style='width: 100%;overflow-wrap: break-word;resize: none;'></textarea> <br><br> Kod <br> <textarea id='Qcode' style=' width: 100%;overflow-wrap: break-word;resize: none;' rows='6'></textarea>";
-      },
-      build:function(){
-          this.setHeader("Pomoc");
-        },
-        setup:function(){
-            return { 
-                buttons:[{text:"Potwierdź"},{text: "Anuluj", key:27, cancel:true}],
-                focus: { element:0 },
-                options:{
-                  maximizable:false,
-                  movable:false,
-                  closable:false,
-                },
-            };
-      },
-      prepare:function(){
-        this.setContent(this.message);
-        this.resizeTo(500,480);
-      },
-      callback:function(CloseEvent){
-        if(CloseEvent.button.cancel != true){
-            
-            let quest = this.elements.content.children[1].value;
-            let qcode = this.elements.content.lastElementChild.value;
-            let id = User[0][2];
-            console.log(quest,qcode,id);
-            socket.emit("Problem",id,quest,qcode);
-        }
-      }
-  }});
-
-  alertify.dialog('helpAlert',function factory(){//odzczytanie wiadomosci od ucznia
-    return{
-      main:function(quest,qcode,id){
-        this.message = `<p>pytanie:<br><pre><code>${quest}</code></pre></p></p>kod:<br><pre><code>${qcode}</code></pre></p>`;
-        this.id = id
-      },
-      build:function(){
-          this.setHeader("Pomoc");
-        },
-        setup:function(){
-            return { 
-                buttons:[{text:"Problem rozwiazany"},{text: "Anuluj", key:27, cancel:true}],
-                focus: { element:0 },
-                options:{
-                  maximizable:false,
-                  movable:false,
-                  closable:false,
-                },
-            };
-      },
-      prepare:function(){
-        this.setContent(this.message);
-        this.resizeTo(500,480);
-      },
-      callback:function(CloseEvent){
-        if(CloseEvent.button.cancel != true){
-            let tr = document.querySelectorAll("tr")[this.id]
-            tr.classList.value = "table-info";
-            tr.children[3].innerHTML="";
-        }
-      }
-  }});
-// koniec klas alertyify
-
 // logowanie
 document.querySelector("#submit").addEventListener("click",()=>{
     if(fields[2].value != 20){ // logowanie ucznia
@@ -113,8 +42,39 @@ socket.on('Passed',(msg)=>{
         window.document.title = "Panel Nauczyciela";
         document.querySelector("#teacher").innerHTML = `${build().toString()}`;
         document.querySelector("#student").innerHTML = ``;
-        let CBs = document.querySelectorAll(".CB");
         let Trs = document.querySelectorAll("tr");
+        //funkcjonalnosc buttona timeBtn
+        const timeBtn = document.querySelector("#timeBtn");
+        let timer;
+        let time=0;
+        const timeDisplay = document.querySelector("#timeDisplay")
+        timeBtn.classList.add("btn","btn-outline-info");
+        let timeStarted = false; //zmienna przetrzymujaca informacje czy czas sie juz zanczal
+        timeBtn.addEventListener("click",()=>{ //zegar
+            if(timeStarted){
+                timeBtn.innerText = "Start";
+                window.clearInterval(timer)
+            }else{
+                time = 0;
+                timer = setInterval(() => {
+                    time+=1;
+                    timeSec = time%60>59?0:time%60;
+                    timeSec = timeSec<10?"0"+timeSec:timeSec;
+                    timeMin = time>=60?~~(time/60):0;
+                    timeMin = timeMin<10?"0"+timeMin:time;
+                    timeDisplay.innerText = ` ${timeMin}:${timeSec}`;
+                }, 1000);
+                timeBtn.innerText = "Stop";
+            }
+            timeStarted = !timeStarted;
+        })
+
+        //funkcjonalnosc reqCode
+        let cbReqCode = document.querySelector("#reqCode");
+        cbReqCode.addEventListener("click",()=>{
+            cbReqCode.checked?socket.emit("reqCode",true):socket.emit("reqCode",false);
+        })
+
         socket.on("Data",(Users)=>{
             Object.values(Users).forEach(x=>{
                 let data = x.value[2];
@@ -128,13 +88,13 @@ socket.on('Passed',(msg)=>{
         socket.on("SCB",(action,user)=>{ //zaznaczenie/odznaczenie cb 
             action == "C"?alertify.success(`${user[0]} ${user[1]} skończył/a zadanie na stanowsku nr. ${user[2]}`):false;
             action == "C"?Trs[user[2]].classList.value = "table-success":Trs[user[2]].classList.value = "table-info";
+            action == "C"?Trs[user[2]].lastElementChild.innerText=timeDisplay.innerText:false;
         });
 
         socket.on("UUpdate",(user)=>{ // wyswietlenie dolaczenia ucznia
             Trs[user[2]].children[1].innerText = user[0];
             Trs[user[2]].children[2].innerText = user[1];
             Trs[user[2]].classList.value = "table-info";
-            CBs[user[2]].checked = false;
             alertify.success(`${user[0]} ${user[1]} dołączył/a na ${user[2]} stanowisku`);
         });
         socket.on("DC",(user)=>{ // wyswietlenie rozloczenia ucznia
@@ -142,6 +102,8 @@ socket.on('Passed',(msg)=>{
             Trs[user[2]].classList.value = "";
             Trs[user[2]].children[1].innerText = ""; 
             Trs[user[2]].children[2].innerText = "";
+            Trs[user[2]].children[3].innerHTML = "";
+            Trs[user[2]].children[4].innerHTML = "";
         });
         socket.on("fProblem",(id,quest,qcode)=>{ // wyswietlenie problemu / pytania ucznia
             Trs[id].classList.value = "table-danger"
@@ -155,14 +117,27 @@ socket.on('Passed',(msg)=>{
             Trs[id].children[3].appendChild(btn)
         })
 
+        socket.on("code",(id,code)=>{
+            let btn = document.createElement("button")
+            btn.classList.add("btn","btn-outline-info")
+            btn.innerText = "Kod"
+            btn.addEventListener("click",()=>{
+                alertify.viewCode(code,id);
+            })
+            Trs[id].children[3].innerHTML="";
+            Trs[id].children[3].appendChild(btn)
+        })
+
         //koniec udanego logowania nauczyciela
     }else{ //udane logowanie ucznia
         //generowanie wygladu
+        let isCodeRequired = false;
+        window.document.title = "Panel Ucznia";
         let D = document.querySelector("#student > div.userID");
         D.parentElement.style.display = "flex";
         let CB = document.querySelector("#CB");
         let help = document.querySelector("#help");
-        D.innerHTML = `<span class="badge bg-dark">${User[0][2]}</span><span> ${User[0][0]} ${User[0][1]}</span>`;
+        D.innerHTML = `<span class="badge bg-dark">${User[0][2]}</span><span style="margin-left:10px;"> ${User[0][0]} ${User[0][1]}</span>`;
         
         // wyslanie zapytania o pomoc
         help.addEventListener("click",()=>{
@@ -172,7 +147,11 @@ socket.on('Passed',(msg)=>{
         // wyslanie wartoci cb
         CB.addEventListener("click",()=>{
             if(CB.checked == true){
-                socket.emit("CB",User[0],"C");
+                if(isCodeRequired){
+                    alertify.sendCode("")
+                }else{
+                    socket.emit("CB",User[0],"C");
+                }
             }else{
                 socket.emit("CB",User[0],"U");
             }
@@ -181,13 +160,16 @@ socket.on('Passed',(msg)=>{
         socket.on("CBReset",()=>{
             CB.checked = false;
         });
+        socket.on("reqCode",(isReq)=>{
+            isCodeRequired = isReq;
+        })
     }//koniec udanego logowania ucznia
 });//koniec udanego logowania
 
 function build(Users){//stworzenie tabeli uczniow dla widoku nauczyciela 
-    let tab = [`<thead><tr><th scope="col">#</th><th scope="col">Imię</th><th scope="col">Nazwisko</th><th scope="col">Zadanie</th></tr></thead><tbody>`];
+    let tab = [`<thead><tr><th scope="col">#</th><th scope="col">Imię</th><th scope="col">Nazwisko</th><th scope="col">Zadanie <input type="checkbox" id="reqCode" class="form-check-input"></th><th><button id="timeBtn">Start</button><span id="timeDisplay"> 00:00<span></th></tr></thead><tbody>`];
     for(let i = 1 ; i<=19; i++){
-        tab[i] = `<tr><td scope="row">${i}</td><td></td><td></td><td></td></tr>`
+        tab[i] = `<tr><td scope="row">${i}</td><td></td><td></td><td></td><td></td></tr>`
     }
 
     return tab.join("")+"</tbody>";

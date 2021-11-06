@@ -16,7 +16,13 @@ body {
 }
 
 #student {
+  margin: 50px;
   flex-direction: column;
+  border: 2px solid black;
+  border-radius: 10px;
+  width: 400px;
+  align-items: center;
+  padding: 40px 0 10px;
 }
 
 #student > div {
@@ -25,4 +31,18 @@ body {
   border-radius: 10px;
   padding: 10px;
   width: fit-content;
+}
+
+.userID {
+  font-size: 17px;
+  display: flex;
+  position: absolute;
+  align-items: center;
+  top: 22px;
+  z-index: 10;
+  background-color: #eee5e9;
+}
+
+.btn {
+  line-height: 1;
 }
